@@ -62,9 +62,10 @@ public class Recipe {
     private List<Ingredients> ingredients;
 
 
-    public Recipe(String description, Integer countPortion, User user,
+    public Recipe(Long id,String description, Integer countPortion, User user,
                   NationalCuisine nationalCuisine, Dish dish, List<Tastes> tastes,
                   List<Ingredients> ingredients) {
+        this.id = id;
         this.description = description;
         this.countPortion = countPortion;
         this.user = user;

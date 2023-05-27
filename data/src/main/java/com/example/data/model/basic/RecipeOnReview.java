@@ -47,7 +47,7 @@ public class RecipeOnReview {
     )
     private List<Tastes> tastes;
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = {CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "recipe_on_review_ingredients",
             joinColumns = {@JoinColumn(name = "recipe_id")},

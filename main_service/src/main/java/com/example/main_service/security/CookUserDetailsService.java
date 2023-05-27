@@ -18,10 +18,6 @@ public class CookUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public UserDetails loadUserByUsernameAndRoles(String login, Collection<? extends GrantedAuthority> roles) throws UsernameNotFoundException {
-        return CookUserDetails.build(login, roles);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userRepository.

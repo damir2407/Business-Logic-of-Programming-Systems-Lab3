@@ -1,12 +1,12 @@
 package com.example.main_service.controller;
 
-import com.example.data.dto.RecipeDTOMapper;
-import com.example.data.dto.RecipeOnReviewDTOMapper;
+import com.example.data.mapper.RecipeDTOMapper;
+import com.example.data.mapper.RecipeOnReviewDTOMapper;
 import com.example.data.dto.request.AddRecipeRequest;
 import com.example.data.dto.request.UpdateRecipeRequest;
 import com.example.data.dto.response.RecipeResponse;
+import com.example.data.dto.response.SuccessResponse;
 import com.example.data.model.basic.Recipe;
-import com.example.data.model.basic.RecipeOnReview;
 import com.example.main_service.security.AuthTokenFilter;
 import com.example.main_service.security.JwtUtils;
 import com.example.main_service.service.RecipeOnReviewService;
@@ -14,6 +14,7 @@ import com.example.main_service.service.RecipeService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
@@ -47,11 +48,11 @@ public class RecipeController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public RecipeResponse newRecipe(@Valid @RequestBody AddRecipeRequest addRecipeRequest,
-                                    HttpServletRequest httpServletRequest) {
+    public SuccessResponse newRecipe(@Valid @RequestBody AddRecipeRequest addRecipeRequest,
+                                     HttpServletRequest httpServletRequest) {
         String login = jwtUtils.getLoginFromJwtToken(authTokenFilter.parseJwt(httpServletRequest));
-        RecipeOnReview recipeOnReview = recipeService.saveRecipe(login, addRecipeRequest);
-        return recipeOnReviewDTOMapper.apply(recipeOnReview);
+        recipeService.saveRecipe(login, addRecipeRequest);
+        return new SuccessResponse("Рецепт успешно отправлен на рассмотрение администраторам! Уведомление придет вам на почту.");
 
     }
 
@@ -64,12 +65,12 @@ public class RecipeController {
 
 
     @PutMapping()
-    public RecipeResponse updateRecipe(@RequestParam Long id,
-                                       @Valid @RequestBody UpdateRecipeRequest updateRecipeRequest,
-                                       HttpServletRequest httpServletRequest) {
+    public SuccessResponse updateRecipe(@RequestParam Long id,
+                                        @Valid @RequestBody UpdateRecipeRequest updateRecipeRequest,
+                                        HttpServletRequest httpServletRequest) {
         String login = jwtUtils.getLoginFromJwtToken(authTokenFilter.parseJwt(httpServletRequest));
-        RecipeOnReview recipeOnReview = recipeService.updateRecipe(login, id, updateRecipeRequest);
-        return recipeOnReviewDTOMapper.apply(recipeOnReview);
+        recipeService.updateRecipe(login, id, updateRecipeRequest);
+        return new SuccessResponse("Рецепт успешно отправлен на рассмотрение администраторам! Уведомление придет вам на почту.");
     }
 
     @GetMapping()
@@ -89,15 +90,15 @@ public class RecipeController {
     }
 
     @PutMapping("accept/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public RecipeResponse acceptRecipe(@PathVariable Long id) {
-        return recipeDTOMapper.apply(recipeOnReviewService.saveRecipe(id));
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void acceptRecipe(@PathVariable Long id) {
+        recipeOnReviewService.saveRecipe(id);
     }
 
     @DeleteMapping("decline/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void declineRecipe(@PathVariable Long id) {
-        recipeOnReviewService.deleteRecipe(id);
+    public void declineRecipe(@PathVariable Long id, @RequestBody String declineReason) {
+        recipeOnReviewService.deleteRecipe(id, declineReason);
     }
 
     @GetMapping("/review")

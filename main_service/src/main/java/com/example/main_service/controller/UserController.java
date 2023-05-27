@@ -1,6 +1,6 @@
 package com.example.main_service.controller;
 
-import com.example.data.dto.UserDTOMapper;
+import com.example.data.mapper.UserDTOMapper;
 import com.example.data.dto.request.RefreshTokenRequest;
 import com.example.data.dto.request.SignInRequest;
 import com.example.data.dto.request.SignUpRequest;

@@ -10,6 +10,7 @@ import com.example.data.repository.basic.RoleRepository;
 import com.example.data.repository.basic.UserRepository;
 import com.example.main_service.exception.ResourceAlreadyExistException;
 import com.example.main_service.exception.ResourceNotFoundException;
+import com.example.main_service.security.CookUserDetails;
 import com.example.main_service.security.CookUserDetailsService;
 import com.example.main_service.security.JwtUtils;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,9 +46,9 @@ public class UserService {
     }
 
     public AccessAndRefreshToken authUser(SignInRequest signInRequest) {
-        UserDetails userDetails = cookUserDetailsService.loadUserByUsername(signInRequest.getLogin());
-        String accessToken = jwtUtils.generateJWTToken(userDetails.getUsername(), userDetails.getAuthorities());
-        String refreshToken = jwtUtils.generateRefreshToken(userDetails.getUsername(),  userDetails.getAuthorities());
+        CookUserDetails userDetails = (CookUserDetails) cookUserDetailsService.loadUserByUsername(signInRequest.getLogin());
+        String accessToken = jwtUtils.generateJWTToken(userDetails.getUsername(), userDetails.getAuthorities(), userDetails.getEmail());
+        String refreshToken = jwtUtils.generateRefreshToken(userDetails.getUsername(),  userDetails.getAuthorities(), userDetails.getEmail());
         return new AccessAndRefreshToken(accessToken, refreshToken);
     }
 

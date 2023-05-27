@@ -31,7 +31,8 @@ public class JwtUtils {
     @Value("${token.RTExpirationMs}")
     private long refreshExpirationMS;
 
-    public String generateToken(String login, Collection<? extends GrantedAuthority> roles, long time) {
+    public String generateToken(String login, Collection<? extends GrantedAuthority> roles, long time,
+                                String email) {
         Instant now = Instant.now();
         ZoneId utcZone = ZoneId.of("UTC");
         ZonedDateTime utcNow = ZonedDateTime.ofInstant(now, utcZone);
@@ -40,7 +41,7 @@ public class JwtUtils {
                 .collect(Collectors.toList());
         Claims claims = Jwts.claims().setSubject(login);
         claims.put("authorities", authorities);
-
+        claims.put("email", email);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -51,13 +52,15 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateJWTToken(String login, Collection<? extends GrantedAuthority> roles) {
-        return generateToken(login, roles, jwtExpirationMs);
+    public String generateJWTToken(String login, Collection<? extends GrantedAuthority> roles,
+                                   String email) {
+        return generateToken(login, roles, jwtExpirationMs, email);
     }
 
 
-    public String generateRefreshToken(String login, Collection<? extends GrantedAuthority> roles) {
-        return generateToken(login, roles, refreshExpirationMS);
+    public String generateRefreshToken(String login, Collection<? extends GrantedAuthority> roles,
+                                       String email) {
+        return generateToken(login, roles, refreshExpirationMS, email);
     }
 
 
@@ -94,5 +97,10 @@ public class JwtUtils {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
         return authorities;
+    }
+
+    public String getEmailFromToken(String jwt){
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody()
+                .get("email").toString();
     }
 }

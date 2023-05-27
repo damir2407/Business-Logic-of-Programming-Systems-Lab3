@@ -1,4 +1,4 @@
-package com.example.data.dto;
+package com.example.data.mapper;
 
 
 import com.example.data.dto.response.UserResponse;

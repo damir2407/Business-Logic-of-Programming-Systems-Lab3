@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 public class RefreshTokenService {
     private final JwtUtils jwtUtils;
 
-    private final CookUserDetailsService cookUserDetailsService;
 
-    public RefreshTokenService(CookUserDetailsService cookUserDetailsService, JwtUtils jwtUtils) {
-        this.cookUserDetailsService = cookUserDetailsService;
+    public RefreshTokenService(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
 
@@ -23,11 +21,12 @@ public class RefreshTokenService {
             throw new TokenHasExpiredException(refreshTokenRequest.getRefreshToken(), "Токен истек");
         }
         String login = jwtUtils.getLoginFromJwtToken(refreshTokenRequest.getRefreshToken());
+        String email = jwtUtils.getEmailFromToken(refreshTokenRequest.getRefreshToken());
 
         String accessToken = jwtUtils.generateJWTToken(login,
-                jwtUtils.getAuthoritiesFromToken(refreshTokenRequest.getRefreshToken()));
+                jwtUtils.getAuthoritiesFromToken(refreshTokenRequest.getRefreshToken()), email);
         String refreshToken = jwtUtils.generateRefreshToken(
-                login, jwtUtils.getAuthoritiesFromToken(refreshTokenRequest.getRefreshToken()));
+                login, jwtUtils.getAuthoritiesFromToken(refreshTokenRequest.getRefreshToken()), email);
         return new NewTokenResponse(accessToken, refreshToken);
     }
 }

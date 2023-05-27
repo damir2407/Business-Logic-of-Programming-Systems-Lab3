@@ -36,10 +36,6 @@ public class CookUserDetails implements UserDetails {
     }
 
 
-    public static CookUserDetails build(String login, Collection<? extends GrantedAuthority> roles) {
-
-        return new CookUserDetails(login, roles);
-    }
 
     public static CookUserDetails build(User user) {
 
