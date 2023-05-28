@@ -45,15 +45,11 @@ public class RecipeOnReviewService {
     public void saveRecipe(Long id) {
         Optional<RecipeOnReview> recipe = recipeOnReviewRepository.findById(id);
 
-
         if (recipe.isEmpty()) {
             throw new PermissionDeniedException("Рецепта с id=" + id + " не существует!");
         }
 
-
-
         //     тут в очередь recipe.accept.queue передай recipe.get() ибо прошел уже проверки + логин админа с токена
-
 
 
 
