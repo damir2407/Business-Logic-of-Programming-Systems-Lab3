@@ -11,10 +11,12 @@ import com.example.main_service.security.AuthTokenFilter;
 import com.example.main_service.security.JwtUtils;
 import com.example.main_service.service.RecipeOnReviewService;
 import com.example.main_service.service.RecipeService;
+import com.example.main_service.util.SendMessage;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jms.JMSException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
@@ -32,18 +34,21 @@ public class RecipeController {
 
     private final RecipeDTOMapper recipeDTOMapper;
 
+    private final SendMessage sendMessage;
+
     public RecipeController(RecipeService recipeService,
                             RecipeOnReviewService recipeOnReviewService,
                             JwtUtils jwtUtils,
                             AuthTokenFilter authTokenFilter,
                             RecipeOnReviewDTOMapper recipeOnReviewDTOMapper,
-                            RecipeDTOMapper recipeDTOMapper) {
+                            RecipeDTOMapper recipeDTOMapper, SendMessage sendMessage) {
         this.recipeService = recipeService;
         this.recipeOnReviewService = recipeOnReviewService;
         this.jwtUtils = jwtUtils;
         this.authTokenFilter = authTokenFilter;
         this.recipeOnReviewDTOMapper = recipeOnReviewDTOMapper;
         this.recipeDTOMapper = recipeDTOMapper;
+        this.sendMessage = sendMessage;
     }
 
     @PostMapping()
@@ -76,7 +81,8 @@ public class RecipeController {
     @GetMapping()
     public List<RecipeResponse> getAllRecipes(@RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size,
-                                              @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
+                                              @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) throws Exception {
+        sendMessage.sendMessage("q");
         return recipeService.getAllRecipes(page, size, sortOrder.toString()).getContent()
                 .stream()
                 .map(recipeDTOMapper)
@@ -112,5 +118,8 @@ public class RecipeController {
                 .stream()
                 .map(recipeOnReviewDTOMapper)
                 .collect(Collectors.toList());
+
     }
+
+
 }
