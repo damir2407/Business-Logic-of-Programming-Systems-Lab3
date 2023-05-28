@@ -7,6 +7,7 @@ services:
     depends_on:
       - db1
       - db2
+      - artemis
     ports:
       - 8085:8900
     restart: on-failure
@@ -20,6 +21,9 @@ services:
       - SPRING_DATASOURCE_EXTENDED_PASSWORD=20021700sa
       - spring_datasource_hikari_connection-timeout=30000
       - spring_datasource_hikari_maximum-pool-size=5
+      - SPRING_ARTEMIS_USER=artemis
+      - SPRING_ARTEMIS_PASSWORD=2002170sa
+      - SPRING_ARTEMIS_BROKERURL=tcp://artemis:61616
       - token_JWTExpirationMS=900000
       - token_RTExpirationMs=864000000
       - token_issuer=coocker.ru

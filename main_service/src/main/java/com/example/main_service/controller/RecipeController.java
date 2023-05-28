@@ -29,26 +29,30 @@ public class RecipeController {
     private final RecipeOnReviewService recipeOnReviewService;
     private final AuthTokenFilter authTokenFilter;
     private final JwtUtils jwtUtils;
-
+    private final SendMessage sendMessage;
     private final RecipeOnReviewDTOMapper recipeOnReviewDTOMapper;
 
     private final RecipeDTOMapper recipeDTOMapper;
-
-    private final SendMessage sendMessage;
 
     public RecipeController(RecipeService recipeService,
                             RecipeOnReviewService recipeOnReviewService,
                             JwtUtils jwtUtils,
                             AuthTokenFilter authTokenFilter,
-                            RecipeOnReviewDTOMapper recipeOnReviewDTOMapper,
-                            RecipeDTOMapper recipeDTOMapper, SendMessage sendMessage) {
+                            SendMessage sendMessage, RecipeOnReviewDTOMapper recipeOnReviewDTOMapper,
+                            RecipeDTOMapper recipeDTOMapper) {
         this.recipeService = recipeService;
         this.recipeOnReviewService = recipeOnReviewService;
         this.jwtUtils = jwtUtils;
         this.authTokenFilter = authTokenFilter;
+        this.sendMessage = sendMessage;
         this.recipeOnReviewDTOMapper = recipeOnReviewDTOMapper;
         this.recipeDTOMapper = recipeDTOMapper;
-        this.sendMessage = sendMessage;
+    }
+
+    @GetMapping("/message")
+    public String sendMessage(@RequestParam String message, @RequestParam String queueMessage) throws JMSException {
+        sendMessage.sendMessage(message,queueMessage);
+        return message;
     }
 
     @PostMapping()
@@ -81,8 +85,7 @@ public class RecipeController {
     @GetMapping()
     public List<RecipeResponse> getAllRecipes(@RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size,
-                                              @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) throws Exception {
-        sendMessage.sendMessage("q");
+                                              @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
         return recipeService.getAllRecipes(page, size, sortOrder.toString()).getContent()
                 .stream()
                 .map(recipeDTOMapper)
@@ -118,8 +121,5 @@ public class RecipeController {
                 .stream()
                 .map(recipeOnReviewDTOMapper)
                 .collect(Collectors.toList());
-
     }
-
-
 }
