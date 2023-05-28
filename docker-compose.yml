@@ -71,6 +71,8 @@ services:
       - 8161:8161
       - 61616:61616
       - 61613:61613
+    volumes:
+      - ./broker.xml:/var/lib/artemis/etc/broker.xml
     environment:
       - ARTEMIS_USERNAME=artemis
       - ARTEMIS_PASSWORD=2002170sa

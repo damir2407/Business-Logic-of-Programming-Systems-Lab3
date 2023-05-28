@@ -18,8 +18,8 @@ public class SendMessage {
         Connection connection = factory.createConnection();
         System.out.println(message);
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        Queue queue = session.createQueue(queueMessage);
-        MessageProducer producer = session.createProducer(queue);
+        Destination destination = session.createQueue(queueMessage);
+        MessageProducer producer = session.createProducer(destination);
         producer.send(session.createTextMessage(message));
         session.close();
         connection.close();
