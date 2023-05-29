@@ -2,7 +2,6 @@ package com.example.email_service.jms;
 
 
 import com.example.email_service.service.RecipeService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Controller;
 
@@ -19,7 +18,7 @@ public class JmsRecipeConsumer {
         this.recipeService = recipeService;
     }
 
-    @JmsListener(destination = "/queue/accept")
+    @JmsListener(destination = "${recipe.accept.queue}")
     public void acceptRecipe(Message message) throws JMSException {
         System.out.println(message.getStringProperty("recipeId"));
         System.out.println(message.getStringProperty("admin"));
@@ -28,8 +27,7 @@ public class JmsRecipeConsumer {
     }
 
 
-
-    @JmsListener(destination = "/queue/decline")
+    @JmsListener(destination = "${recipe.decline.queue}")
     public void declineRecipe(Message message) throws JMSException {
         System.out.println(message.getStringProperty("recipeId"));
         System.out.println(message.getStringProperty("admin"));

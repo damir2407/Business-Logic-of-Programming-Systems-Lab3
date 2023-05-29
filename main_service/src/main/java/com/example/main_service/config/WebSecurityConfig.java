@@ -6,6 +6,7 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.fusesource.stomp.jms.StompJmsConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
@@ -37,6 +38,15 @@ public class WebSecurityConfig {
 
     private final AuthTokenFilter authenticationJwtTokenFilter;
 
+    @Value("${stomp.jms.factory.brokerURI}")
+    private String brokerURI;
+
+    @Value("${stomp.jms.factory.username}")
+    private String username;
+
+    @Value("${stomp.jms.factory.password}")
+    private String password;
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -51,6 +61,7 @@ public class WebSecurityConfig {
         this.unauthorizedHandler = unauthorizedHandler;
         this.authenticationJwtTokenFilter = authenticationJwtTokenFilter;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -68,9 +79,9 @@ public class WebSecurityConfig {
     public StompJmsConnectionFactory stompJmsConnectionFactory() {
         StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
         factory.setDisconnectTimeout(5000);
-        factory.setBrokerURI("tcp://artemis:61616");
-        factory.setUsername("artemis");
-        factory.setPassword("20021700sa");
+        factory.setBrokerURI(brokerURI);
+        factory.setUsername(username);
+        factory.setPassword(password);
         return factory;
     }
 
@@ -84,7 +95,7 @@ public class WebSecurityConfig {
                 .antMatchers("/cuisine/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers(HttpMethod.GET, "/cuisine/**").hasAuthority("ROLE_USER")
 
-                .antMatchers(HttpMethod.POST, "/culinary-news/**").hasAnyAuthority("ROLE_ADMIN","ROLE_USER")
+                .antMatchers(HttpMethod.POST, "/culinary-news/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                 .antMatchers(HttpMethod.GET, "/culinary-news/**").permitAll()
 
                 .antMatchers("/dish/**").hasAuthority("ROLE_ADMIN")

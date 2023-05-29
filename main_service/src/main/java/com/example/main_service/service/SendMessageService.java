@@ -9,11 +9,12 @@ import javax.jms.*;
 
 @Service
 public class SendMessageService {
-//    мб StompJmsConnectionFactory как бин внедрить с этими настройками чекнуть крч позже
 
-    private final String acceptQueueName = "accept";
+    @Value("${recipe.accept.queue}")
+    private String acceptQueueName;
 
-    private final String declineQueueName ="decline";
+    @Value("${recipe.decline.queue}")
+    private String declineQueueName;
 
     private final StompJmsConnectionFactory factory;
 

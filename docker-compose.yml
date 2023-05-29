@@ -20,14 +20,10 @@ services:
       - SPRING_DATASOURCE_EXTENDED_URL=jdbc:postgresql://db2:5432/extended
       - SPRING_DATASOURCE_EXTENDED_USERNAME=postgres
       - SPRING_DATASOURCE_EXTENDED_PASSWORD=20021700sa
-      - spring_datasource_hikari_connection-timeout=30000
-      - spring_datasource_hikari_maximum-pool-size=5
       - SPRING_ARTEMIS_USER=artemis
       - SPRING_ARTEMIS_PASSWORD=20021700sa
       - SPRING_ARTEMIS_BROKERURL=tcp://artemis:61616
-      - token_JWTExpirationMS=900000
-      - token_RTExpirationMs=864000000
-      - token_issuer=coocker.ru
+
 
   email_service:
     image: email_service-image
@@ -48,14 +44,10 @@ services:
       - SPRING_DATASOURCE_EXTENDED_URL=jdbc:postgresql://db2:5432/extended
       - SPRING_DATASOURCE_EXTENDED_USERNAME=postgres
       - SPRING_DATASOURCE_EXTENDED_PASSWORD=20021700sa
-      - spring_datasource_hikari_connection-timeout=30000
-      - spring_datasource_hikari_maximum-pool-size=5
       - SPRING_ARTEMIS_USER=artemis
       - SPRING_ARTEMIS_PASSWORD=20021700sa
       - SPRING_ARTEMIS_BROKERURL=tcp://artemis:61616
-      - token_JWTExpirationMS=900000
-      - token_RTExpirationMs=864000000
-      - token_issuer=coocker.ru
+
 
   db1:
     image: postgres:15

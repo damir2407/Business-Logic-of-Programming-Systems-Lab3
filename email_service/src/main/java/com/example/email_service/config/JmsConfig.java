@@ -14,9 +14,6 @@ public class JmsConfig {
     @Bean
     public ConnectionFactory connectionFactory() throws JMSException {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-        connectionFactory.setBrokerURL("tcp://artemis:61616");
-        connectionFactory.setUser("artemis");
-        connectionFactory.setPassword("20021700sa");
         return new CachingConnectionFactory(connectionFactory);
     }
 
