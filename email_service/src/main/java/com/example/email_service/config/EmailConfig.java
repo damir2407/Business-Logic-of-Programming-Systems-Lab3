@@ -33,7 +33,7 @@ public class EmailConfig {
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.debug", "true");
-        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.transport.protocol", "smtps");
 
         return mailSender;
     }

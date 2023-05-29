@@ -101,7 +101,7 @@ public class RecipeController {
 
     @DeleteMapping("decline")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void declineRecipe(@RequestParam Long id, @RequestBody String declineReason,
+    public void declineRecipe(@RequestParam Long id, @RequestParam String declineReason,
                               HttpServletRequest httpServletRequest) throws JMSException {
         String admin = jwtUtils.getLoginFromJwtToken(authTokenFilter.parseJwt(httpServletRequest));
         recipeOnReviewService.deleteRecipe(id, admin, declineReason);

@@ -22,7 +22,8 @@ public class SendMessageService {
         this.factory = factory;
     }
 
-    public void sendAcceptMessage(Long recipeId, String admin) throws JMSException {
+    public void sendAcceptMessage(Long recipeId, String admin,
+                                  String email ) throws JMSException {
         Connection connection = factory.createConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Destination destination = session.createQueue(acceptQueueName);
@@ -31,6 +32,8 @@ public class SendMessageService {
         Message toSendMessage = session.createMessage();
         toSendMessage.setLongProperty("recipeId", recipeId);
         toSendMessage.setStringProperty("admin", admin);
+        toSendMessage.setStringProperty("email", email);
+
 
         producer.send(toSendMessage);
         session.close();
@@ -38,7 +41,8 @@ public class SendMessageService {
     }
 
 
-    public void sendDeclineMessage(Long recipeId, String admin, String declineReason) throws JMSException {
+    public void sendDeclineMessage(Long recipeId, String admin,
+                                   String declineReason, String email ) throws JMSException {
         Connection connection = factory.createConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Destination destination = session.createQueue(declineQueueName);
@@ -48,6 +52,7 @@ public class SendMessageService {
         toSendMessage.setLongProperty("recipeId", recipeId);
         toSendMessage.setStringProperty("admin", admin);
         toSendMessage.setStringProperty("declineReason", declineReason);
+        toSendMessage.setStringProperty("email", email);
 
         producer.send(toSendMessage);
         session.close();

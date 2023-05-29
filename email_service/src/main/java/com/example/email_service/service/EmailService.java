@@ -24,6 +24,7 @@ public class EmailService {
 
 
     public void sendSimpleMail(EmailDetails details) {
+
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(sender);

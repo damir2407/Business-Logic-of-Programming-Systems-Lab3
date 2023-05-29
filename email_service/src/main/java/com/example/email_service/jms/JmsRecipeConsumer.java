@@ -22,9 +22,8 @@ public class JmsRecipeConsumer {
     public void acceptRecipe(Message message) throws JMSException {
         Long recipeId = message.getLongProperty("recipeId");
         String admin = message.getStringProperty("admin");
-        System.out.println(recipeId);
-        System.out.println(admin);
-        recipeService.acceptRecipe(recipeId, admin);
+        String email = message.getStringProperty("email");
+        recipeService.acceptRecipe(recipeId, admin, email);
     }
 
 
@@ -33,9 +32,7 @@ public class JmsRecipeConsumer {
         Long recipeId = message.getLongProperty("recipeId");
         String admin = message.getStringProperty("admin");
         String declineReason = message.getStringProperty("declineReason");
-        System.out.println(recipeId);
-        System.out.println(admin);
-        System.out.println(declineReason);
-        recipeService.declineRecipe(recipeId, admin, declineReason);
+        String email = message.getStringProperty("email");
+        recipeService.declineRecipe(recipeId, admin, declineReason, email);
     }
 }
