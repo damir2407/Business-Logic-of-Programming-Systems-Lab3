@@ -9,7 +9,6 @@ import com.example.data.dto.response.SuccessResponse;
 import com.example.data.model.basic.Recipe;
 import com.example.main_service.security.AuthTokenFilter;
 import com.example.main_service.security.JwtUtils;
-import com.example.main_service.service.SendMessageService;
 import com.example.main_service.service.RecipeOnReviewService;
 import com.example.main_service.service.RecipeService;
 import org.springframework.data.domain.Sort;
@@ -34,21 +33,19 @@ public class RecipeController {
 
     private final RecipeDTOMapper recipeDTOMapper;
 
-    private final SendMessageService sendMessageService;
 
     public RecipeController(RecipeService recipeService,
                             RecipeOnReviewService recipeOnReviewService,
                             JwtUtils jwtUtils,
                             AuthTokenFilter authTokenFilter,
                             RecipeOnReviewDTOMapper recipeOnReviewDTOMapper,
-                            RecipeDTOMapper recipeDTOMapper, SendMessageService sendMessageService) {
+                            RecipeDTOMapper recipeDTOMapper) {
         this.recipeService = recipeService;
         this.recipeOnReviewService = recipeOnReviewService;
         this.jwtUtils = jwtUtils;
         this.authTokenFilter = authTokenFilter;
         this.recipeOnReviewDTOMapper = recipeOnReviewDTOMapper;
         this.recipeDTOMapper = recipeDTOMapper;
-        this.sendMessageService = sendMessageService;
     }
 
     @PostMapping()
@@ -68,11 +65,6 @@ public class RecipeController {
         recipeService.deleteRecipe(login, id);
     }
 
-    @GetMapping("/message")
-    public String sendMessage(@RequestParam String message, @RequestParam String queueName) throws JMSException {
-//        sendMessage.sendMessage(message, queueName);
-        return message;
-    }
 
     @PutMapping()
     public SuccessResponse updateRecipe(@RequestParam Long id,
@@ -86,7 +78,7 @@ public class RecipeController {
     @GetMapping()
     public List<RecipeResponse> getAllRecipes(@RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size,
-                                              @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) throws Exception {
+                                              @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
         return recipeService.getAllRecipes(page, size, sortOrder.toString()).getContent()
                 .stream()
                 .map(recipeDTOMapper)

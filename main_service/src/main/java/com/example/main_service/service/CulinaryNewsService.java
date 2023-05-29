@@ -3,7 +3,7 @@ package com.example.main_service.service;
 import com.example.data.dto.request.AddCulinaryNewRequest;
 import com.example.data.model.extended.CulinaryNews;
 import com.example.data.repository.extended.CulinaryNewsRepository;
-import com.example.main_service.exception.ResourceNotFoundException;
+import com.example.data.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

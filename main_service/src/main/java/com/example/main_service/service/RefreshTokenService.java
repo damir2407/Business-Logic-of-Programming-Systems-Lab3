@@ -2,8 +2,7 @@ package com.example.main_service.service;
 
 import com.example.data.dto.request.RefreshTokenRequest;
 import com.example.data.dto.response.NewTokenResponse;
-import com.example.main_service.exception.TokenHasExpiredException;
-import com.example.main_service.security.CookUserDetailsService;
+import com.example.data.exception.TokenHasExpiredException;
 import com.example.main_service.security.JwtUtils;
 import org.springframework.stereotype.Service;
 

@@ -20,18 +20,22 @@ public class JmsRecipeConsumer {
 
     @JmsListener(destination = "${recipe.accept.queue}")
     public void acceptRecipe(Message message) throws JMSException {
-        System.out.println(message.getStringProperty("recipeId"));
-        System.out.println(message.getStringProperty("admin"));
-//            recipeService.acceptRecipe(recipeOnReview, admin);
-
+        Long recipeId = message.getLongProperty("recipeId");
+        String admin = message.getStringProperty("admin");
+        System.out.println(recipeId);
+        System.out.println(admin);
+        recipeService.acceptRecipe(recipeId, admin);
     }
 
 
     @JmsListener(destination = "${recipe.decline.queue}")
     public void declineRecipe(Message message) throws JMSException {
-        System.out.println(message.getStringProperty("recipeId"));
-        System.out.println(message.getStringProperty("admin"));
-        System.out.println(message.getStringProperty("declineReason"));
-//        recipeService.declineRecipe(id, declineReason, admin);
+        Long recipeId = message.getLongProperty("recipeId");
+        String admin = message.getStringProperty("admin");
+        String declineReason = message.getStringProperty("declineReason");
+        System.out.println(recipeId);
+        System.out.println(admin);
+        System.out.println(declineReason);
+        recipeService.declineRecipe(recipeId, admin, declineReason);
     }
 }

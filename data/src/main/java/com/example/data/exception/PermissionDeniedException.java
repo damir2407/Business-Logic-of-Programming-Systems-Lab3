@@ -1,4 +1,4 @@
-package com.example.main_service.exception;
+package com.example.data.exception;
 
 public class PermissionDeniedException extends RuntimeException{
     public PermissionDeniedException(String message) {

@@ -1,11 +1,11 @@
-package com.example.main_service.exception;
+package com.example.main_service.controller;
 
 
 import javax.jms.JMSException;
-import javax.management.JMException;
 import javax.validation.ConstraintViolationException;
 
 import com.example.data.dto.response.ErrorResponse;
+import com.example.data.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;

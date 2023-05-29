@@ -1,4 +1,4 @@
-package com.example.main_service.exception;
+package com.example.data.exception;
 
 public class IllegalPageParametersException extends RuntimeException {
     public IllegalPageParametersException(String message) {
