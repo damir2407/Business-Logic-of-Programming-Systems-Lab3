@@ -11,12 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class RecipeService {
+    private Recipe recipe;
     private final RecipeRepository recipeRepository;
     private final RecipeOnReviewRepository recipeOnReviewRepository;
 
@@ -54,6 +56,7 @@ public class RecipeService {
         recipeOnReviewRepository.save(recipe);
         return recipe;
     }
+
     public Recipe findRecipeById(Long id) {
         return recipeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Рецепт с номером " + id + " не найден в базе!"));
     }
@@ -100,5 +103,19 @@ public class RecipeService {
         Sort.Direction direction = Sort.Direction.fromString(sortOrder);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
         return recipeRepository.findAll(pageable);
+    }
+
+    @Scheduled(fixedRate = 9000L)
+    public void updateRecipeOfTheDay() {
+        List<Long> ids = recipeRepository.findIds();
+        if (ids.size() != 0) {
+            Random random = new Random();
+            int id = random.nextInt(ids.size());
+            recipe = recipeRepository.findById(ids.get(id)).get();
+        }
+    }
+
+    public Recipe getRecipe() {
+        return recipe;
     }
 }

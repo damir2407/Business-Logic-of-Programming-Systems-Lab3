@@ -121,5 +121,9 @@ public class RecipeController {
 
     }
 
+    @GetMapping("/recipeOfTheDay")
+    public RecipeResponse getRecipeOfTheDay() {
+        return recipeDTOMapper.apply(recipeService.getRecipe());
+    }
 
 }

@@ -22,6 +22,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     List<Recipe> findAllById(Iterable<Long> longs);
 
+    @Query(value = "SELECT id FROM recipe", nativeQuery = true)
+    List<Long> findIds();
+
     @Query(value = "SELECT recipe FROM recipe WHERE recipe.dish_id IN" +
             "(SELECT dish.id FROM dish WHERE UPPER(dish.name) LIKE CONCAT('%', UPPER(?2), '%'))" +
             "AND recipe.cuisine_id IN" +
