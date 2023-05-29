@@ -7,6 +7,7 @@ import com.example.data.repository.basic.RecipeOnReviewRepository;
 import com.example.data.repository.basic.RecipeRepository;
 import com.example.data.exception.PermissionDeniedException;
 import com.example.data.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import java.util.*;
 
 @Service
 public class RecipeService {
-    private Recipe recipe;
+    private Recipe recipeOfTheDay;
     private final RecipeRepository recipeRepository;
     private final RecipeOnReviewRepository recipeOnReviewRepository;
 
@@ -35,7 +36,8 @@ public class RecipeService {
 
     public RecipeService(RecipeRepository recipeRepository, RecipeOnReviewRepository recipeOnReviewRepository, UserService userService, DishService dishService,
                          IngredientsService ingredientsService, TastesService tastesService,
-                         NationalCuisineService nationalCuisineService) {
+                         NationalCuisineService nationalCuisineService,
+                         @Qualifier("singletonRecipe") Recipe recipeOfTheDay) {
         this.recipeRepository = recipeRepository;
         this.recipeOnReviewRepository = recipeOnReviewRepository;
         this.userService = userService;
@@ -43,6 +45,7 @@ public class RecipeService {
         this.ingredientsService = ingredientsService;
         this.tastesService = tastesService;
         this.nationalCuisineService = nationalCuisineService;
+        this.recipeOfTheDay = recipeOfTheDay;
     }
 
     public RecipeOnReview saveRecipe(String login, AddRecipeRequest addRecipeRequest) {
@@ -108,14 +111,14 @@ public class RecipeService {
     @Scheduled(fixedRate = 9000L)
     public void updateRecipeOfTheDay() {
         List<Long> ids = recipeRepository.findIds();
-        if (ids.size() != 0) {
+        if (!ids.isEmpty()) {
             Random random = new Random();
             int id = random.nextInt(ids.size());
-            recipe = recipeRepository.findById(ids.get(id)).get();
+            recipeOfTheDay = recipeRepository.findById(ids.get(id)).get();
         }
     }
 
-    public Recipe getRecipe() {
-        return recipe;
+    public Recipe getRecipeOfTheDay() {
+        return recipeOfTheDay;
     }
 }

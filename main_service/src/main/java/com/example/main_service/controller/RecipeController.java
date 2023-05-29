@@ -123,7 +123,7 @@ public class RecipeController {
 
     @GetMapping("/recipeOfTheDay")
     public RecipeResponse getRecipeOfTheDay() {
-        return recipeDTOMapper.apply(recipeService.getRecipe());
+        return recipeDTOMapper.apply(recipeService.getRecipeOfTheDay());
     }
 
 }

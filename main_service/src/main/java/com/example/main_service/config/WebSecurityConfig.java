@@ -1,5 +1,6 @@
 package com.example.main_service.config;
 
+import com.example.data.model.basic.Recipe;
 import com.example.main_service.security.AuthEntryPointJwt;
 import com.example.main_service.security.AuthTokenFilter;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -7,7 +8,9 @@ import org.fusesource.stomp.jms.StompJmsConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpMethod;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.connection.CachingConnectionFactory;
@@ -85,6 +88,11 @@ public class WebSecurityConfig {
         return factory;
     }
 
+
+    @Bean
+    public Recipe singletonRecipe() {
+        return new Recipe();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
