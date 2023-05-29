@@ -36,11 +36,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-artemis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-jms-client</artifactId>
-            <version>2.28.0</version>
-        </dependency>
+
         <dependency>
             <groupId>org.fusesource.stompjms</groupId>
             <artifactId>stompjms-client</artifactId>

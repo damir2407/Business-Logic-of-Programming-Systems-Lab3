@@ -1,9 +1,12 @@
 package com.example.main_service.exception;
 
 
+import javax.jms.JMSException;
+import javax.management.JMException;
 import javax.validation.ConstraintViolationException;
 
 import com.example.data.dto.response.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 @RestControllerAdvice
+@Slf4j
 public class ErrorHandlingController {
 
     @ExceptionHandler({PermissionDeniedException.class,
@@ -40,5 +44,12 @@ public class ErrorHandlingController {
     public ErrorResponse handleNotFoundException(RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+
+    @ExceptionHandler({JMSException.class})
+    public void handleJMSException(Exception e) {
+        log.error(e.getCause().getMessage());
+    }
+
 
 }

@@ -7,6 +7,8 @@ services:
     depends_on:
       - db1
       - db2
+      - email_service
+      - artemis
     ports:
       - 8085:8900
     restart: on-failure
@@ -20,10 +22,41 @@ services:
       - SPRING_DATASOURCE_EXTENDED_PASSWORD=20021700sa
       - spring_datasource_hikari_connection-timeout=30000
       - spring_datasource_hikari_maximum-pool-size=5
+      - SPRING_ARTEMIS_USER=artemis
+      - SPRING_ARTEMIS_PASSWORD=20021700sa
+      - SPRING_ARTEMIS_BROKERURL=tcp://artemis:61616
       - token_JWTExpirationMS=900000
       - token_RTExpirationMs=864000000
       - token_issuer=coocker.ru
-  
+
+  email_service:
+    image: email_service-image
+    build: ./email_service/
+    container_name: email_service
+    depends_on:
+      - db1
+      - db2
+      - artemis
+    ports:
+      - 8086:8901
+    restart: on-failure
+    environment:
+      - SERVER_PORT=8901
+      - SPRING_DATASOURCE_BASIC_URL=jdbc:postgresql://db1:5432/basic
+      - SPRING_DATASOURCE_BASIC_USERNAME=postgres
+      - SPRING_DATASOURCE_BASIC_PASSWORD=20021700sa
+      - SPRING_DATASOURCE_EXTENDED_URL=jdbc:postgresql://db2:5432/extended
+      - SPRING_DATASOURCE_EXTENDED_USERNAME=postgres
+      - SPRING_DATASOURCE_EXTENDED_PASSWORD=20021700sa
+      - spring_datasource_hikari_connection-timeout=30000
+      - spring_datasource_hikari_maximum-pool-size=5
+      - SPRING_ARTEMIS_USER=artemis
+      - SPRING_ARTEMIS_PASSWORD=20021700sa
+      - SPRING_ARTEMIS_BROKERURL=tcp://artemis:61616
+      - token_JWTExpirationMS=900000
+      - token_RTExpirationMs=864000000
+      - token_issuer=coocker.ru
+
   db1:
     image: postgres:15
     container_name: db1
@@ -59,19 +92,20 @@ services:
       POSTGRES_PASSWORD: "20021700sa"
     volumes:
       - extended_data:/var/lib/postgresql/data
-  
+
   artemis:
     image: vromero/activemq-artemis
     container_name: artemis
     ports:
       - 8161:8161
-      - 61616:61616
-      - 61613:61613
+      - 8256:61616
+      - 8213:61613
     environment:
       - ARTEMIS_USERNAME=artemis
-      - ARTEMIS_PASSWORD=2002170sa
+      - ARTEMIS_PASSWORD=20021700sa
+    volumes:
+      - ./broker.xml:/var/lib/artemis/etc/broker.xml
 
 volumes:
   extended_data:
   basic_data:
-

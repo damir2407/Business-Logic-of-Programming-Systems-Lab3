@@ -2,9 +2,14 @@ package com.example.main_service.config;
 
 import com.example.main_service.security.AuthEntryPointJwt;
 import com.example.main_service.security.AuthTokenFilter;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.fusesource.stomp.jms.StompJmsConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +26,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import java.util.List;
 
 @EnableWebSecurity
@@ -53,6 +60,18 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+
+    // Настройка фабрики контейнеров для StompJmsConnectionFactory
+    @Bean
+    public StompJmsConnectionFactory stompJmsConnectionFactory() {
+        StompJmsConnectionFactory factory = new StompJmsConnectionFactory();
+        factory.setDisconnectTimeout(5000);
+        factory.setBrokerURI("tcp://artemis:61616");
+        factory.setUsername("artemis");
+        factory.setPassword("20021700sa");
+        return factory;
     }
 
 

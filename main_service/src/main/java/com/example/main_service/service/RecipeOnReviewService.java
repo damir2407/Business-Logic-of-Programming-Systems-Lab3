@@ -3,15 +3,13 @@ package com.example.main_service.service;
 import com.example.data.model.basic.*;
 import com.example.data.repository.basic.RecipeOnReviewRepository;
 import com.example.data.repository.basic.RecipeRepository;
-import com.example.main_service.exception.PermissionDeniedException;
-import com.example.main_service.security.JwtUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import javax.jms.JMSException;
 
 @Service
 public class RecipeOnReviewService {
@@ -28,11 +26,13 @@ public class RecipeOnReviewService {
 
     private final NationalCuisineService nationalCuisineService;
 
+    private final SendMessageService sendMessageService;
+
     public RecipeOnReviewService(RecipeRepository recipeRepository,
                                  RecipeOnReviewRepository recipeOnReviewRepository,
                                  UserService userService, DishService dishService,
                                  IngredientsService ingredientsService, TastesService tastesService,
-                                 NationalCuisineService nationalCuisineService) {
+                                 NationalCuisineService nationalCuisineService, SendMessageService sendMessageService) {
         this.recipeRepository = recipeRepository;
         this.recipeOnReviewRepository = recipeOnReviewRepository;
         this.userService = userService;
@@ -40,17 +40,20 @@ public class RecipeOnReviewService {
         this.ingredientsService = ingredientsService;
         this.tastesService = tastesService;
         this.nationalCuisineService = nationalCuisineService;
+        this.sendMessageService = sendMessageService;
     }
 
-    public void saveRecipe(Long id) {
-        Optional<RecipeOnReview> recipe = recipeOnReviewRepository.findById(id);
+    public void saveRecipe(Long id, String admin) throws JMSException {
+//        Optional<RecipeOnReview> recipe = recipeOnReviewRepository.findById(id);
+//
+//        if (recipe.isEmpty()) {
+//            throw new PermissionDeniedException("Рецепта с id=" + id + " не существует!");
+//        }
 
-        if (recipe.isEmpty()) {
-            throw new PermissionDeniedException("Рецепта с id=" + id + " не существует!");
-        }
+        sendMessageService.sendAcceptMessage(id, admin);
 
-        //     тут в очередь recipe.accept.queue передай recipe.get() ибо прошел уже проверки + логин админа с токена
 
+        //       тут в очередь recipe.accept.queue передай recipe.get() ибо прошел уже проверки + логин админа с токена
 
 
 //        коменты снизу не удаляй, мне мб понадобятся
@@ -76,12 +79,13 @@ public class RecipeOnReviewService {
 
     }
 
-    public void deleteRecipe(Long id, String declineReason) {
-        Optional<RecipeOnReview> recipe = recipeOnReviewRepository.findById(id);
-        if (recipe.isEmpty()) {
-            throw new PermissionDeniedException("Рецепта с id=" + id + " не существует!");
-        }
+    public void deleteRecipe(Long id,String admin, String declineReason) throws JMSException {
+//        Optional<RecipeOnReview> recipe = recipeOnReviewRepository.findById(id);
+//        if (recipe.isEmpty()) {
+//            throw new PermissionDeniedException("Рецепта с id=" + id + " не существует!");
+//        }
 
+        sendMessageService.sendDeclineMessage(id, admin, declineReason);
 
         //     тут в очередь recipe.decline.queue передай id ибо прошел уже проверки + причину отказа
         //     + логин админа с токена

@@ -9,9 +9,9 @@ import com.example.data.dto.response.SuccessResponse;
 import com.example.data.model.basic.Recipe;
 import com.example.main_service.security.AuthTokenFilter;
 import com.example.main_service.security.JwtUtils;
+import com.example.main_service.service.SendMessageService;
 import com.example.main_service.service.RecipeOnReviewService;
 import com.example.main_service.service.RecipeService;
-import com.example.main_service.util.SendMessage;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,21 +34,21 @@ public class RecipeController {
 
     private final RecipeDTOMapper recipeDTOMapper;
 
-    private final SendMessage sendMessage;
+    private final SendMessageService sendMessageService;
 
     public RecipeController(RecipeService recipeService,
                             RecipeOnReviewService recipeOnReviewService,
                             JwtUtils jwtUtils,
                             AuthTokenFilter authTokenFilter,
                             RecipeOnReviewDTOMapper recipeOnReviewDTOMapper,
-                            RecipeDTOMapper recipeDTOMapper, SendMessage sendMessage) {
+                            RecipeDTOMapper recipeDTOMapper, SendMessageService sendMessageService) {
         this.recipeService = recipeService;
         this.recipeOnReviewService = recipeOnReviewService;
         this.jwtUtils = jwtUtils;
         this.authTokenFilter = authTokenFilter;
         this.recipeOnReviewDTOMapper = recipeOnReviewDTOMapper;
         this.recipeDTOMapper = recipeDTOMapper;
-        this.sendMessage = sendMessage;
+        this.sendMessageService = sendMessageService;
     }
 
     @PostMapping()
@@ -68,6 +68,11 @@ public class RecipeController {
         recipeService.deleteRecipe(login, id);
     }
 
+    @GetMapping("/message")
+    public String sendMessage(@RequestParam String message, @RequestParam String queueName) throws JMSException {
+//        sendMessage.sendMessage(message, queueName);
+        return message;
+    }
 
     @PutMapping()
     public SuccessResponse updateRecipe(@RequestParam Long id,
@@ -82,7 +87,6 @@ public class RecipeController {
     public List<RecipeResponse> getAllRecipes(@RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size,
                                               @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) throws Exception {
-        sendMessage.sendMessage("q");
         return recipeService.getAllRecipes(page, size, sortOrder.toString()).getContent()
                 .stream()
                 .map(recipeDTOMapper)
@@ -95,16 +99,20 @@ public class RecipeController {
         return recipeDTOMapper.apply(recipe);
     }
 
-    @PutMapping("accept/{id}")
+    @PutMapping("accept")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void acceptRecipe(@PathVariable Long id) {
-        recipeOnReviewService.saveRecipe(id);
+    public void acceptRecipe(@RequestParam Long id,
+                             HttpServletRequest httpServletRequest) throws JMSException {
+        String admin = jwtUtils.getLoginFromJwtToken(authTokenFilter.parseJwt(httpServletRequest));
+        recipeOnReviewService.saveRecipe(id, admin);
     }
 
-    @DeleteMapping("decline/{id}")
+    @DeleteMapping("decline")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void declineRecipe(@PathVariable Long id, @RequestBody String declineReason) {
-        recipeOnReviewService.deleteRecipe(id, declineReason);
+    public void declineRecipe(@RequestParam Long id, @RequestBody String declineReason,
+                              HttpServletRequest httpServletRequest) throws JMSException {
+        String admin = jwtUtils.getLoginFromJwtToken(authTokenFilter.parseJwt(httpServletRequest));
+        recipeOnReviewService.deleteRecipe(id, admin, declineReason);
     }
 
     @GetMapping("/review")
