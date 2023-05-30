@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jms.JMSException;
 import java.util.List;
@@ -46,11 +47,13 @@ public class RecipeOnReviewService {
         this.sendMessageService = sendMessageService;
     }
 
+
+    @Transactional("transactionManager")
     public void saveRecipe(Long id, String admin) throws JMSException {
         Optional<RecipeOnReview> recipeOnReview = recipeOnReviewRepository.findById(id);
-        if (recipeOnReview.isEmpty()) {
+        if (recipeOnReview.isEmpty())
             throw new ResourceNotFoundException("Рецепта с id=" + id + " не существует!");
-        }
+
 
         Recipe recipe = new Recipe();
         Dish dish = dishService.findDishByName(recipeOnReview.get().getDish().getName());
